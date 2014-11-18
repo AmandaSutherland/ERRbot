@@ -37,14 +37,32 @@ class ERRbotMain:
 		else:
 			self.image_stream = False
 
-	def arbiter(self)
+	def arbiter(self,location,is_object,what_object,next_move):
+		linear,angular=next_move
+		if is_object > .8:
+			#add to map if it is not already there (push location to where we are making the map)
+			self.new_object = location,what_object
+			#follow path (next_move)
+			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
+		elif is_object>.5
+			#turn towards potential object
+			#ignore path
+		else:
+			#follow path (next_move)
+			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 
 if __name__ == '__main__':
 	rospy.init_node('capture', anonymous=True)
 	n = ERRbotMain
 	while not(rospy.is_shutdown()):
-		
 		if n.image_stream == False:
-			print 'nope'
+			print 'nope. no image.'
 		else:
-			self.arbiter
+			try:
+				location,is_object,what_object = thread.start_new_thread(ERRbotVision.Vison,(img))
+				mapping = thread.start_new_thread(ERRbotMap.Map,(n.new_object))
+				next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
+			else:
+				print 'failed threading'
+			self.arbiter(location,is_object,what_object,next_move)
+		
