@@ -27,6 +27,15 @@ class ERRbotMain:
 		self.bridge = CvBridge()
 		self.new_img = None
 
+		try:
+			#for image capture 
+			self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
+			self.bridge = CvBridge()
+			#make image something useful
+		except AttributeError:
+			print "ERROR!"
+			pass	
+
 	def capture(self,msg):
 		# IMAGE FROM NEATO 
 		#useful link for image types http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
@@ -45,14 +54,16 @@ class ERRbotMain:
 			self.new_object = location,what_object
 			#follow path (next_move)
 			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
-		elif is_object>.5
+		elif is_object > .5:
 			#Is it an object? Check it and ignore the path
 			#turn towards potential object
 			#ignore path
+			print 'hello'
 		else:
+			print 'else'
 			#Theres probably no object. Move on.
 			#follow path (next_move)
-			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
+			#pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 
 if __name__ == '__main__':
 	rospy.init_node('capture', anonymous=True)
@@ -66,8 +77,8 @@ if __name__ == '__main__':
 				location,is_object,what_object = thread.start_new_thread(ERRbotVision.Vison,(img))
 				mapping = thread.start_new_thread(ERRbotMap.Map,(n.new_object))
 				next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
-			else:
-				print 'failed threading'
-			self.arbiter(location,is_object,what_object,next_move)
+			#else:
+				#print 'failed threading'
+			n.arbiter(location,is_object,what_object,next_move)
 		cv2.namedWindow("Image")
 		cv2.imshow("Image",frame)
