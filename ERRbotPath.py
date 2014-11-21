@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-class ERRbotPath:
+def Path:
 
-	def __init__(self,descriptor):
-
-
-if __name__ == '__main__':
+	#output is new_move which should be composed of a suggested linear,angular pair of speeds

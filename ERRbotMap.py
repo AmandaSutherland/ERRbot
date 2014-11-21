@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-class ERRbotMap:
+def Map(new_objects):
+	"""
+	Output is some list of particles or map for the path planning to take in and make its decisions based on.
+	Does not actually matter what this is, but the path planning depends on what it is."""
 
-	def __init__(self,descriptor):
-
-
-if __name__ == '__main__':
-	pass
