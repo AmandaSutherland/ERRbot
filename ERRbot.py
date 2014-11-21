@@ -31,7 +31,7 @@ class ERRbotMain:
 		# IMAGE FROM NEATO 
 		#useful link for image types http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
 		cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-		3self.new_img = cv_image
+		self.new_img = cv_image
 		if self.new_img.shape[0] == 480:
 			self.image_stream = True
 		else:
@@ -40,22 +40,26 @@ class ERRbotMain:
 	def arbiter(self,location,is_object,what_object,next_move):
 		linear,angular=next_move
 		if is_object > .8:
+			#its an object!! Map it and move on!
 			#add to map if it is not already there (push location to where we are making the map)
 			self.new_object = location,what_object
 			#follow path (next_move)
 			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 		elif is_object>.5
+			#Is it an object? Check it and ignore the path
 			#turn towards potential object
 			#ignore path
 		else:
+			#Theres probably no object. Move on.
 			#follow path (next_move)
 			pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 
 if __name__ == '__main__':
 	rospy.init_node('capture', anonymous=True)
 	n = ERRbotMain
+	n.capture = False
 	while not(rospy.is_shutdown()):
-		if n.image_stream == False:
+		if n.capture == False:
 			print 'nope. no image.'
 		else:
 			try:
@@ -65,4 +69,5 @@ if __name__ == '__main__':
 			else:
 				print 'failed threading'
 			self.arbiter(location,is_object,what_object,next_move)
-		
+		cv2.namedWindow("Image")
+		cv2.imshow("Image",frame)
