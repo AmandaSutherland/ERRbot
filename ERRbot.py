@@ -74,11 +74,12 @@ if __name__ == '__main__':
 			print 'nope. no image.'
 		else:
 			try:
+				#may need to make the arbiter an additional thread. working to resolve this.
 				location,is_object,what_object = thread.start_new_thread(ERRbotVision.Vison,(img))
 				mapping = thread.start_new_thread(ERRbotMap.Map,(n.new_object))
 				next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
-			#else:
-				#print 'failed threading'
+			except:
+				print 'failed threading'
 			n.arbiter(location,is_object,what_object,next_move)
 		cv2.namedWindow("Image")
 		cv2.imshow("Image",frame)
