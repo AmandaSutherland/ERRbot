@@ -22,10 +22,23 @@ from std_msg.msg import String
 class ERRbotVision:
 
 	def __init__(self,descriptor):
+		self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
+		self.bridge = CvBridge()
+		self.new_img = Nonec
 
-		pub = rospy.Publisher('Vision', String, queue_size = 10)
+		pub = rospy.Publisher('Vision', Int16MultiArray, queue_size = 10)
 		rospy.init_node('ERRbotVision', anonymous = True)
 		r = rospy.Rate(10)
+
+	def capture(self,msg):
+		# IMAGE FROM NEATO 
+		#useful link for image types http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
+		cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+		self.new_img = cv_image
+		if self.new_img.shape[0] == 480:
+			self.image_stream = True
+		else:
+			self.image_stream = False
 
 	def Vision(img):
 		'''
@@ -42,13 +55,17 @@ class ERRbotVision:
 		upperblue = np.array([130,255,255])
 		bluemask = cv2.inRange(hsv, lowerblue, upperblue)
 
-		lowerred = np.array([110,100,100])
-		upperred = np.array([130,255,255])
+		lowerred = np.array(0,100,100)
+		upperred = np.array([20,255,255])
 		redmask = cv2.inRange(hsv, lowerred, upperred)
 
-		loweryellow = np.array([110,100,100])
-		upperyellow = np.array([130,255,255])
+		loweryellow = np.array([20, 100, 100])
+		upperyellow = np.array([30,255,255])
 		yellowmask = cv2.inRange(hsv, loweryellow, upperyellow)		
+
+		lowergreen = np.array([110,100,100])
+		uppergreen = np.array([130,255,255])
+		greenmask = cv2.inRange(hsv, lowergreen, uppergreen)	
 
 		houghCircles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=0)
 		houghCircles = np.uint16(np.around(houghCircles))
@@ -83,6 +100,11 @@ class ERRbotVision:
 		#return (distance,is_object,what_object)
 
 if __name == '__main__':
-	try:
+	rospy.init_node('capture', anonymous=True)
+	n = ERRbotVision
+	n.capture = False
+	if n.capture == False:
+		print 'nope. no image.'
+	else:
 		ERRbotVision.Vision()
 	except rospy.ROSInterruptException: pass
