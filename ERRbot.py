@@ -17,6 +17,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
+from std_msg.msg import String
 
 class ERRbotMain:
 
@@ -25,7 +26,11 @@ class ERRbotMain:
 		self.pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
 		self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
 		self.bridge = CvBridge()
-		self.new_img = None
+		self.new_img = Nonec
+
+		rospy.Subscriber("Vision", String, queue_size=1)
+		rospy.Subscriber("Map", String, queue_size=1)
+		rospy.Subscriber("Path", String, queue_size=1)
 
 		try:
 			#for image capture 
