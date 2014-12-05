@@ -23,7 +23,7 @@ class ERRbotPath:
 
 	def __init__(self,descriptor):
 
-		pub = rospy.Publisher('Path', String, queue_size = 10)
+		pub = rospy.Publisher('Path', Int16MultiArray, queue_size = 10)
 		rospy.init_node('ERRbotPath', anonymous = True)
 
 	def Path:
