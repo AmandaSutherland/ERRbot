@@ -6,10 +6,6 @@ import cv2
 import numpy as np
 import math 
 import thread
-
-<<<<<<< HEAD
-	return 1
-=======
 import ERRbotVision
 import ERRbotMap
 import ERRbotPath
@@ -48,4 +44,3 @@ if __name == '__main__':
 	try:
 		ERRbotMap.Map()
 	except rospy.ROSInterruptException: pass
->>>>>>> be606a528eb5d9f6f9745a8082586c85602c7302
