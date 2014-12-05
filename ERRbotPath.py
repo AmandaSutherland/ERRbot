@@ -9,6 +9,10 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import LaserScan
+import cv
+import cv2
+import numpy as np
+import math 
 
 import ERRbotVision
 #import ERRbotMap
@@ -153,7 +157,6 @@ class ERRbotPath:
 	def wall_follow(pub):
 	    global stopped
 	    r = rospy.Rate(10) # 10hz
-
 	    while not rospy.is_shutdown():
 	        if first_sight_wall:
 	            if no_valid_angles == True:

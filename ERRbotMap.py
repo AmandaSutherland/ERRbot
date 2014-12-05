@@ -5,7 +5,11 @@ import cv
 import cv2
 import numpy as np
 import math 
+<<<<<<< HEAD
 import thread
+=======
+
+>>>>>>> 85e82fb5da3de80043b3f2ad07651df17d9a8ec5
 import ERRbotVision
 import ERRbotMap
 import ERRbotPath
@@ -22,7 +26,7 @@ class ERRbotMap:
 
 	def __init__(self,descriptor):
 
-		pub = rospy.Publisher('Map', String, queue_size = 10)
+		pub = rospy.Publisher('Map', Int16MultiArray, queue_size = 10)
 		rospy.init_node('ERRbotMap', anonymous = True)
 
 	def Map(new_objects):
