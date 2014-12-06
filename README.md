@@ -14,3 +14,13 @@ roslaunch neato_2dnav hector_mapping_neato.launch
 (later) roslaunch hector_slam hector_mappping.launch 
 
 ```
+
+## Neccessary Installs 
+
+```
+Install hector_slam and hector_worldmodel
+
+sudo apt-get install ros-hydro-hector-slam
+sudo apt-get install ros-hydro-hector-worldmodel
+
+```
