@@ -92,9 +92,9 @@ class ERRbotVision:
 				#add color, size, location and probablility it is an object to arrays
 
 		while not rospy.is_shutdown():
-			str = %distance,is_object,what_object
-			rospy.loginfo(str)
-			pub.publish(str)
+			int = distance,is_object,what_object
+			rospy.loginfo(int)
+			pub.publish(int)
 			r.sleep()
 
 		#return (distance,is_object,what_object)

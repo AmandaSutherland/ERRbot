@@ -33,9 +33,9 @@ class ERRbotPath:
 		return 1
 
 		while not rospy.is_shutdown():
-			str = ''
-			rospy.loginfo(str)
-			pub.publish(str)
+			int = linear, anglular
+			rospy.loginfo(int)
+			pub.publish(int)
 			r.sleep()
 
 		#return (distance,is_object,what_object)

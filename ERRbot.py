@@ -28,9 +28,9 @@ class ERRbotMain:
 		# self.bridge = CvBridge()
 		# self.new_img = Nonec
 
-		rospy.Subscriber("Vision", String, queue_size=1)
-		rospy.Subscriber("Map", String, queue_size=1)
-		rospy.Subscriber("Path", String, queue_size=1)
+		rospy.Subscriber("Vision", 	int32, queue_size=1)
+		rospy.Subscriber("Map", int32, queue_size=1)
+		rospy.Subscriber("Path", int32, queue_size=1)
 
 		try:
 			#for image capture 
