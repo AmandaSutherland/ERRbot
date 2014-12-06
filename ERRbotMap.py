@@ -5,11 +5,6 @@ import cv
 import cv2
 import numpy as np
 import math 
-<<<<<<< HEAD
-import thread
-=======
-
->>>>>>> 85e82fb5da3de80043b3f2ad07651df17d9a8ec5
 import ERRbotVision
 import ERRbotMap
 import ERRbotPath
@@ -24,15 +19,12 @@ from std_msg.msg import String
 
 class ERRbotMap:
 
-	def __init__(self,descriptor):
-
-		pub = rospy.Publisher('Map', Int16MultiArray, queue_size = 10)
-		rospy.init_node('ERRbotMap', anonymous = True)
+	#def __init__(self,descriptor):
 
 	def Map(new_objects):
 		"""
-		Output is some list of particles or map for the path planning to take in and make its decisions based on.
-		Does not actually matter what this is, but the path planning depends on what it is."""
+		Output is a map of the area, updated to show the objects as they are found. Map takes in the 
+		Occupancy Grid from hector_slam and the object position from ERRbotVision. Map is for visualization only."""
 
 		return 1
 
