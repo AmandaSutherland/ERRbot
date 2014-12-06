@@ -5,7 +5,6 @@ import cv
 import cv2
 import numpy as np
 import math 
-import thread
 
 import ERRbotVision
 import ERRbotMap

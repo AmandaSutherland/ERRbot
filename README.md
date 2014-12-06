@@ -12,4 +12,5 @@ roslaunch neato_node bringup.launch host:=IP_ADDRESS_OF_THE_PI
 rosrun ERRbot ERRbot.launch
 roslaunch neato_2dnav hector_mapping_neato.launch
 (later) roslaunch hector_slam hector_mappping.launch 
+rosrun rviz rviz
 ```
