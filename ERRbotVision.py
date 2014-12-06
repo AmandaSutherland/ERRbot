@@ -30,6 +30,17 @@ class ERRbotVision:
 		rospy.init_node('ERRbotVision', anonymous = True)
 		r = rospy.Rate(10)
 
+		self.new_img = None
+
+		try:
+			#for image capture 
+			self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
+			self.bridge = CvBridge()
+			#make image something useful
+		except AttributeError:
+			print "ERROR!"
+			pass	
+
 	def capture(self,msg):
 		# IMAGE FROM NEATO 
 		#useful link for image types http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
@@ -102,9 +113,12 @@ class ERRbotVision:
 if __name == '__main__':
 	rospy.init_node('capture', anonymous=True)
 	n = ERRbotVision
-	n.capture = False
+	#n.capture = False
+	cv2.namedWindow('NeatoView')
 	if n.capture == False:
 		print 'nope. no image.'
 	else:
+		frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
 		ERRbotVision.Vision()
+		cv2.imshow("NeatoView",frame)
 	except rospy.ROSInterruptException: pass
