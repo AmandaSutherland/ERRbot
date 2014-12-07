@@ -78,8 +78,8 @@ class ERRbotVision:
 		uppergreen = np.array([130,255,255])
 		greenmask = cv2.inRange(hsv, lowergreen, uppergreen)	
 
-		houghCircles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=0)
-		houghCircles = np.uint16(np.around(houghCircles))
+		houghCircles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=50)
+		#houghCircles = np.uint16(np.around(houghCircles))
 
 		what_object = []
 		distance = []
@@ -87,10 +87,52 @@ class ERRbotVision:
 
 		for i in houghCircles[0,:]:
 
-			# draw the outer circle
-	    	cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
-	    	# draw the center of the circle
-	    	cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+			#blueROI = bluemask[i[0]-i[2]:i[0]+i[2], i[1]-i[2]:i[1]+i[2]]
+          	#bluemean = cv2.mean(blueROI)
+
+          	if bluemask[c[1], c[0]]  > 100:
+				# draw the outer circle
+		    	cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+		    	# draw the center of the circle
+		    	cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+		    	bluelocation = Vector3(c[0], c[1],c[2])
+
+		    	what_object.append(1)
+		    	distance.append(bluelocation)
+		    	is_object.append(1)
+
+		    if redmask[c[1], c[0]]  > 100:
+				# draw the outer circle
+		    	cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+		    	# draw the center of the circle
+		    	cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+		    	redlocation = Vector3(c[0], c[1],c[2])
+
+		    	what_object.append(2)
+		    	distance.append(redlocation)
+		    	is_object.append(1)
+
+		    if yellowmask[c[1], c[0]]  > 100:
+				# draw the outer circle
+		    	cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+		    	# draw the center of the circle
+		    	cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+		    	yellowlocation = Vector3(c[0], c[1],c[2])
+
+		    	what_object.append(3)
+		    	distance.append(yellowlocation)
+		    	is_object.append(1)
+
+		    if greenmask[c[1], c[0]]  > 100:
+				# draw the outer circle
+		    	cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+		    	# draw the center of the circle
+		    	cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+		    	greenlocation = Vector3(c[0], c[1],c[2])
+
+		    	what_object.append(4)
+		    	distance.append(greenlocation)
+		    	is_object.append(1)
 
 			#if circle is in blue mask
 				#return blue
@@ -121,4 +163,4 @@ if __name == '__main__':
 		frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
 		ERRbotVision.Vision()
 		cv2.imshow("NeatoView",frame)
-	except rospy.ROSInterruptException: pass
+z	except rospy.ROSInterruptException: pass
