@@ -3,6 +3,8 @@
 <!--<node pkg="rviz" type="rviz" name="rviz" args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.vcg"/>-->
 <node pkg="errbot" type="ERRbotPath.py" name="Path"/>
 <node pkg="errbot" type="ERRbot.py" name="main"/>
+<node pkg="errbot" type="ERRbotVision.py" name="Vision"/>
+<node pkg="errbot" type="ERRbotMap.py" name="Map"/>
 <!--<node pkg="errbot" type="ERRbotTest.py" name="test="/>-->
 
 </launch>
