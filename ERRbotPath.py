@@ -196,8 +196,8 @@ class ERRbotPath:
 			#r.sleep()
 
 			# Initializing node, path_planning
-			rospy.init_node('path_planning', anonymous=True)
-			pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+			rospy.init_node('Path', anonymous=True)
+			pub = rospy.Publisher('Path', Twist, queue_size=10)
 			sub = rospy.Subscriber('scan', LaserScan, scan_received)
 			state = "find_wall"
 			while not rospy.is_shutdown():
