@@ -19,7 +19,8 @@ from std_msg.msg import String
 
 class ERRbotMap:
 
-	#def __init__(self,descriptor):
+	def __init__(self,descriptor):
+		self.VisionListener = rospy.Subscriber("Vision", Int16MultiArray, queue_size = 10)
 
 	def Map(new_objects):
 		"""
