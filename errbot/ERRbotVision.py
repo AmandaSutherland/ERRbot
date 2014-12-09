@@ -7,10 +7,6 @@ import numpy as np
 import math 
 import thread
 
-import ERRbotVision
-import ERRbotMap
-import ERRbotPath
-
 from geometry_msgs.msg import Twist, Vector3
 from matplotlib import pyplot as plt
 from sensor_msgs.msg import Image

@@ -12,10 +12,6 @@ import cv2
 import numpy as np
 import math 
 
-#import ERRbotVision
-#import ERRbotMap
-#import ERRbotPath
-
 first_sight_wall = False
 flag_things_in_front_3 = False
 flag_things_in_front_5 = False
