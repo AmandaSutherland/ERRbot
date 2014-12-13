@@ -198,12 +198,15 @@ namespace base_local_planner {
       private_nh.param("max_vel_x", max_vel_x, 0.5);
       private_nh.param("min_vel_x", min_vel_x, 0.1);
 
+      
       double max_rotational_vel;
-      private_nh.param("max_rotational_vel", max_rotational_vel, 1.0);
+      //Amanda changed this from 1.0 to 0.2.  
+      private_nh.param("max_rotational_vel", max_rotational_vel, 0.2);
       max_vel_th_ = max_rotational_vel;
       std::cout << "max_vel_th hello: " << max_rotational_vel << std::endl;
       min_vel_th_ = -1.0 * max_rotational_vel;
-      private_nh.param("min_in_place_rotational_vel", min_in_place_vel_th_, 0.4);
+      // Amanda changed this from 0.4 to 0.01
+      private_nh.param("min_in_place_rotational_vel", min_in_place_vel_th_, 0.01);
       reached_goal_ = false;
       backup_vel = -0.1;
       if(private_nh.getParam("backup_vel", backup_vel))
@@ -499,12 +502,12 @@ namespace base_local_planner {
     cmd_vel.linear.y = drive_cmds.getOrigin().getY();
     cmd_vel.angular.z = tf::getYaw(drive_cmds.getRotation());
 
-    //Paul's changes 
-    if (cmd_vel.angular.z > .05) {
-      cmd_vel.angular.z = .05;
-    } else if (cmd_vel.angular.z < - .05) {
-      cmd_vel.angular.z = -.05;
-    }
+    // //Paul's changes 
+    // if (cmd_vel.angular.z > .05) {
+    //   cmd_vel.angular.z = .05;
+    // } else if (cmd_vel.angular.z < - .05) {
+    //   cmd_vel.angular.z = -.05;
+    // }
 
     std::cout << "cmd_vel.angular.z " << cmd_vel.angular.z << std::endl;
 
