@@ -12,7 +12,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
-from std_msg.msg import String
+from std_msgs.msg import String
 
 class ERRbotMain:
 
@@ -82,6 +82,10 @@ if __name__ == '__main__':
 		# 		next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
 		# 	except:
 		# 		print 'failed threading'
+		location=0
+		is_object=0
+		what_object=0
+		next_move=0
 		n.arbiter(location,is_object,what_object,next_move)
 		# cv2.namedWindow("Image")
 		# cv2.imshow("Image",frame)

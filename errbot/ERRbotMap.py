@@ -12,7 +12,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
-from std_msg.msg import String
+from std_msgs.msg import String
 
 class ERRbotMap:
 
@@ -33,7 +33,9 @@ class ERRbotMap:
 
 		#return (distance,is_object,what_object)
 
-if __name == '__main__':
+if __name__ == '__main__':
 	try:
-		ERRbotMap.Map()
-	except rospy.ROSInterruptException: pass
+		print('hello')
+		#ERRbotMap.Map()
+	except rospy.ROSInterruptException: 
+		pass
