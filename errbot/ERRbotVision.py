@@ -74,7 +74,7 @@ class ERRbotVision:
 
         what_object = []
         distance = []
-        location = []
+        angle = []
         is_object = []
 
         for i in houghCircles[0,:]:
@@ -84,12 +84,12 @@ class ERRbotVision:
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
                 cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-                bluelocation = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
+                blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
                 bluedistance = i[2]/30 #some constant to get distance to ball
 
                 what_object.append(1)
                 distance.append(bluedistance)
-                location.append(bluelocation)
+                angle.append(blueangle)
                 is_object.append(1)
 
             if redmask[c[1], c[0]]  > 100:
@@ -97,12 +97,12 @@ class ERRbotVision:
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
                 cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-                redlocation = Vector3(i[0], i[1],i[2])
+                redangle = Vector3(i[0], i[1],i[2])
                 reddistance = i[2]/30 #some constant to get distance to ball
 
                 what_object.append(2)
                 distance.append(reddistance)
-                distance.append(redlocation)
+                angle.append(redangle)
                 is_object.append(1)
 
             if yellowmask[c[1], c[0]]  > 100:
@@ -110,12 +110,12 @@ class ERRbotVision:
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
                 cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-                yellowlocation = Vector3(i[0], i[1],i[2])
+                yellowangle = Vector3(i[0], i[1],i[2])
                 yellowdistance = i[2]/30 #some constant to get distance to ball
 
                 what_object.append(3)
                 distance.append(yellowdistance)
-                distance.append(yellowlocation)
+                angle.append(yellowangle)
                 is_object.append(1)
 
             if greenmask[c[1], c[0]]  > 100:
@@ -123,26 +123,26 @@ class ERRbotVision:
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
                 cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-                greenlocation = Vector3(i[0], i[1],i[2])
+                greenangle = Vector3(i[0], i[1],i[2])
                 greendistance = i[2]/30 #some constant to get distance to ball
 
                 what_object.append(4)
                 distance.append(greendistance)
-                distance.append(greenlocation)
+                angle.append(greenangle)
                 is_object.append(1)
 
             #if circle is in blue mask
                 #return blue
-                #add color, size, location and probablility it is an object to arrays
+                #add color, size, angle and probablility it is an object to arrays
             #if circle is in red mask
                 #return red
-                #add color, size, location and probablility it is an object to arrays
+                #add color, size, angle and probablility it is an object to arrays
             #if circle is in yellow mask
                 #return yellow
-                #add color, size, location and probablility it is an object to arrays
+                #add color, size, angle and probablility it is an object to arrays
 
         while not rospy.is_shutdown():
-            int = location, distance,is_object,what_object
+            int = angle, distance,is_object,what_object
             rospy.loginfo(int)
             pub.publish(int)
             r.sleep()
