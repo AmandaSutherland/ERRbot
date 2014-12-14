@@ -18,7 +18,7 @@ class ERRbotMap:
 
 	#def __init__(self,descriptor):
 
-	def Map(new_objects):
+	def Map(self,new_objects):
 		"""
 		Output is a map of the area, updated to show the objects as they are found. Map takes in the 
 		Occupancy Grid from hector_slam and the object position from ERRbotVision. Map is for visualization only."""

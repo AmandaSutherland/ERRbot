@@ -26,11 +26,20 @@ class ERRbotVision:
     def __init__(self,descriptor):
         self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
         self.bridge = CvBridge()
-        self.new_img = Nonec
+        self.new_img = None
 
         pub = rospy.Publisher('Vision', Int16MultiArray, queue_size = 10)
         rospy.init_node('ERRbotVision', anonymous = True)
         r = rospy.Rate(10)
+
+        try:
+            #for image capture 
+            self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
+            self.bridge = CvBridge()
+            #make image something useful
+        except AttributeError:
+            print "ERROR!"
+            pass    
 
     def capture(self,msg):
         # IMAGE FROM NEATO 
@@ -42,7 +51,7 @@ class ERRbotVision:
         else:
             self.image_stream = False
 
-    def Vision(img):
+    def Vision(self,img):
         '''
         outputs are distance,is_object,what_object
         distance = distance from the robot of a potenial object
@@ -152,10 +161,12 @@ class ERRbotVision:
 if __name__ == '__main__':
     rospy.init_node('capture', anonymous=True)
     n = ERRbotVision
-    n.capture = False
+    #n.capture = False
+    cv2.namedWindow('Image')
     if n.capture == False:
         print 'nope. no image.'
     else:
-        ERRbotVision.Vision()
+        n.Vision(n.new_img)
+        cv2.imshow("Image",n.new_img)
     #except rospy.ROSInterruptException: 
     #    pass

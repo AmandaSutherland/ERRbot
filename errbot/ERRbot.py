@@ -23,18 +23,18 @@ class ERRbotMain:
 		# self.bridge = CvBridge()
 		# self.new_img = Nonec
 
-		rospy.Subscriber("Vision", 	int32, queue_size=1)
-		rospy.Subscriber("Map", int32, queue_size=1)
-		rospy.Subscriber("Path", int32, queue_size=1)
+		self.vision = rospy.Subscriber("Vision", 	int32, queue_size=1)
+		self.map = rospy.Subscriber("Map", int32, queue_size=1)
+		self.path = rospy.Subscriber("Path", int32, queue_size=1)
 
-		try:
-			#for image capture 
-			self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
-			self.bridge = CvBridge()
-			#make image something useful
-		except AttributeError:
-			print "ERROR!"
-			pass	
+		# try:
+		# 	#for image capture 
+		# 	self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
+		# 	self.bridge = CvBridge()
+		# 	#make image something useful
+		# except AttributeError:
+		# 	print "ERROR!"
+		# 	pass	
 
 	# def capture(self,msg):
 	# 	# IMAGE FROM NEATO 
@@ -46,8 +46,8 @@ class ERRbotMain:
 	# 	else:
 	# 		self.image_stream = False
 
-	def arbiter(self,location,is_object,what_object,next_move):
-		linear,angular=next_move
+	def arbiter(self):
+		linear,angular=self.path
 		#remove this when is_object is created
 		pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 
@@ -82,10 +82,10 @@ if __name__ == '__main__':
 		# 		next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
 		# 	except:
 		# 		print 'failed threading'
-		location=0
-		is_object=0
-		what_object=0
-		next_move=0
-		n.arbiter(location,is_object,what_object,next_move)
+		# location=0
+		# is_object=0
+		# what_object=0
+		# next_move=0
+		n.arbiter()
 		# cv2.namedWindow("Image")
 		# cv2.imshow("Image",frame)
