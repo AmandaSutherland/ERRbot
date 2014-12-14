@@ -78,11 +78,6 @@ class ERRbotVision:
 
         for i in houghCircles[0,:]:
 
-            # draw the outer circle
-            cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
-            # draw the center of the circle
-            cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-
             if bluemask[c[1], c[0]]  > 100:
                 # draw the outer circle
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
