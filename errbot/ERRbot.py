@@ -12,20 +12,20 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
-from std_msgs.msg import String
+from std_msgs.msg import String,Int64
 
 class ERRbotMain:
 
-	def __init__(self,descriptor):
-		rospy.Subscriber("scan", LaserScan, self.scan_received, queue_size=1)
+	def __init__(self):
+		rospy.Subscriber("scan", LaserScan, queue_size=1)
 		self.pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
 		# self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
 		# self.bridge = CvBridge()
 		# self.new_img = Nonec
 
-		self.vision = rospy.Subscriber("Vision", 	int32, queue_size=1)
-		self.map = rospy.Subscriber("Map", int32, queue_size=1)
-		self.path = rospy.Subscriber("Path", int32, queue_size=1)
+		self.vision = rospy.Subscriber("Vision", 	Int64, queue_size=1)
+		self.map = rospy.Subscriber("Map", Int64, queue_size=1)
+		self.path = rospy.Subscriber("Path", Int64, queue_size=1)
 
 		# try:
 		# 	#for image capture 
@@ -69,7 +69,7 @@ class ERRbotMain:
 
 if __name__ == '__main__':
 	# rospy.init_node('capture', anonymous=True)
-	n = ERRbotMain
+	n = ERRbotMain()
 	#n.capture = False
 	while not(rospy.is_shutdown()):
 		# if n.capture == False:

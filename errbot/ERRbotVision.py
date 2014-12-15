@@ -19,18 +19,18 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
-from std_msgs.msg import String
+from std_msgs.msg import String, Int64
 
 class ERRbotVision:
 
-    def __init__(self,descriptor):
+    def __init__(self):
         self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
         self.bridge = CvBridge()
         self.new_img = None
 
-        pub = rospy.Publisher('Vision', Int16MultiArray, queue_size = 10)
+        self.pub = rospy.Publisher('Vision', Int64, queue_size = 10)
         rospy.init_node('ERRbotVision', anonymous = True)
-        r = rospy.Rate(10)
+        self.r = rospy.Rate(10)
 
         try:
             #for image capture 
@@ -59,14 +59,15 @@ class ERRbotVision:
         what_object = number/color of the object'''
 
         img = cv2.medianBlur(img,5)
-        cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
+        grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        cimg = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         lowerblue = np.array([110,100,100])
         upperblue = np.array([130,255,255])
         bluemask = cv2.inRange(hsv, lowerblue, upperblue)
 
-        lowerred = np.array(0,100,100)
+        lowerred = np.array([0,100,100])
         upperred = np.array([20,255,255])
         redmask = cv2.inRange(hsv, lowerred, upperred)
 
@@ -78,7 +79,8 @@ class ERRbotVision:
         uppergreen = np.array([130,255,255])
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
 
-        houghCircles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=0)
+        edges = cv2.Canny(grey, 100, 150)
+        houghCircles = cv2.HoughCircles(edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=0)
         houghCircles = np.uint16(np.around(houghCircles))
 
         what_object = []
@@ -88,7 +90,7 @@ class ERRbotVision:
 
         for i in houghCircles[0,:]:
 
-            if bluemask[c[1], c[0]]  > 100:
+            if bluemask[i[1], i[0]]  > 100:
                 # draw the outer circle
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
@@ -101,7 +103,7 @@ class ERRbotVision:
                 angle.append(blueangle)
                 is_object.append(1)
 
-            if redmask[c[1], c[0]]  > 100:
+            if redmask[i[1], i[0]]  > 100:
                 # draw the outer circle
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
@@ -114,7 +116,7 @@ class ERRbotVision:
                 angle.append(redangle)
                 is_object.append(1)
 
-            if yellowmask[c[1], c[0]]  > 100:
+            if yellowmask[i[1], i[0]]  > 100:
                 # draw the outer circle
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
@@ -127,7 +129,7 @@ class ERRbotVision:
                 angle.append(yellowangle)
                 is_object.append(1)
 
-            if greenmask[c[1], c[0]]  > 100:
+            if greenmask[i[1], i[0]]  > 100:
                 # draw the outer circle
                 cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
@@ -151,16 +153,16 @@ class ERRbotVision:
                 #add color, size, angle and probablility it is an object to arrays
 
         while not rospy.is_shutdown():
-            int = angle, distance,is_object,what_object
-            rospy.loginfo(int)
-            pub.publish(int)
-            r.sleep()
+            data = angle, distance,is_object,what_object
+            #rospy.loginfo(int)
+            self.pub.publish(data)
+            self.r.sleep()
 
         #return (distance,is_object,what_object)
 
 if __name__ == '__main__':
-    rospy.init_node('capture', anonymous=True)
-    n = ERRbotVision
+    #rospy.init_node('capture', anonymous=True)
+    n = ERRbotVision()
     #n.capture = False
     cv2.namedWindow('Image')
     if n.capture == False:
