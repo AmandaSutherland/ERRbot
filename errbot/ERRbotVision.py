@@ -58,30 +58,38 @@ class ERRbotVision:
         is_object = probability or "goodness" of the object
         what_object = number/color of the object'''
 
+        print 'Vision is working'
+
         img = cv2.medianBlur(img,5)
         grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cimg = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        print 'messing with image'
 
         lowerblue = np.array([110,100,100])
         upperblue = np.array([130,255,255])
         bluemask = cv2.inRange(hsv, lowerblue, upperblue)
+        print 'bluemask'
 
         lowerred = np.array([0,100,100])
         upperred = np.array([20,255,255])
         redmask = cv2.inRange(hsv, lowerred, upperred)
+        print 'redmask'
 
         loweryellow = np.array([20, 100, 100])
         upperyellow = np.array([30,255,255])
-        yellowmask = cv2.inRange(hsv, loweryellow, upperyellow)     
+        yellowmask = cv2.inRange(hsv, loweryellow, upperyellow)
+        print 'yellowmask'     
 
         lowergreen = np.array([110,100,100])
         uppergreen = np.array([130,255,255])
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
+        print 'greenmask'
 
         edges = cv2.Canny(grey, 100, 150)
-        houghCircles = cv2.HoughCircles(edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=0,maxRadius=0)
+        houghCircles = cv2.HoughCircles(edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=20,minRadius=10,maxRadius=50)
         houghCircles = np.uint16(np.around(houghCircles))
+        print 'found circles'
 
         what_object = []
         distance = []
@@ -89,6 +97,7 @@ class ERRbotVision:
         is_object = []
 
         for i in houghCircles[0,:]:
+            print 'iterating circles'
 
             if bluemask[i[1], i[0]]  > 100:
                 # draw the outer circle
@@ -152,6 +161,10 @@ class ERRbotVision:
                 #return yellow
                 #add color, size, angle and probablility it is an object to arrays
 
+        print (what_object)
+        print (distance)
+        print (angle)
+
         while not rospy.is_shutdown():
             data = angle, distance,is_object,what_object
             #rospy.loginfo(int)
@@ -161,14 +174,17 @@ class ERRbotVision:
         #return (distance,is_object,what_object)
 
 if __name__ == '__main__':
-    #rospy.init_node('capture', anonymous=True)
-    n = ERRbotVision()
-    #n.capture = False
-    cv2.namedWindow('Image')
-    if n.capture == False:
-        print 'nope. no image.'
-    else:
-        n.Vision(n.new_img)
-        cv2.imshow("Image",n.new_img)
-    #except rospy.ROSInterruptException: 
-    #    pass
+    try:
+        #rospy.init_node('capture', anonymous=True)
+        n = ERRbotVision()
+        #n.capture = False
+        cv2.namedWindow('NeatoImage')
+        if n.capture == False:
+            print 'nope. no image.'
+        else:
+            print 'got an image'
+            n.Vision(n.new_img)
+            frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
+            cv2.imshow("NeatoImage",n.frame)
+    except rospy.ROSInterruptException: 
+        pass
