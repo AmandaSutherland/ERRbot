@@ -27,6 +27,8 @@ class ERRbotVision:
         self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
         self.bridge = CvBridge()
         self.new_img = None
+        self.cimg = None
+        self.edges = None
 
         self.pub = rospy.Publisher('Vision', Int64, queue_size = 10)
         rospy.init_node('ERRbotVision', anonymous = True)
@@ -62,11 +64,11 @@ class ERRbotVision:
 
         img = cv2.medianBlur(img,5)
         grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        cimg = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
+        self.cimg = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         print 'messing with image'
 
-        lowerblue = np.array([110,100,100])
+        lowerblue = np.array([10,110,110])
         upperblue = np.array([130,255,255])
         bluemask = cv2.inRange(hsv, lowerblue, upperblue)
         print 'bluemask'
@@ -86,8 +88,8 @@ class ERRbotVision:
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
         print 'greenmask'
 
-        edges = cv2.Canny(grey, 100, 150)
-        houghCircles = cv2.HoughCircles(edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=20,minRadius=10,maxRadius=50)
+        self.edges = cv2.Canny(img, 100, 150)
+        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=22,minRadius=10,maxRadius=50)
         houghCircles = np.uint16(np.around(houghCircles))
         print 'found circles'
 
@@ -98,12 +100,17 @@ class ERRbotVision:
 
         for i in houghCircles[0,:]:
             print 'iterating circles'
+            print (i)
+            # draw the outer circle
+            cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,0),2)
+            # draw the center of the circle
+            cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,0),3)
 
             if bluemask[i[1], i[0]]  > 100:
                 # draw the outer circle
-                cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+                cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
                 # draw the center of the circle
-                cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                 blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
                 bluedistance = i[2]/30 #some constant to get distance to ball
 
@@ -114,9 +121,9 @@ class ERRbotVision:
 
             if redmask[i[1], i[0]]  > 100:
                 # draw the outer circle
-                cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
                 # draw the center of the circle
-                cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                 redangle = Vector3(i[0], i[1],i[2])
                 reddistance = i[2]/30 #some constant to get distance to ball
 
@@ -127,9 +134,9 @@ class ERRbotVision:
 
             if yellowmask[i[1], i[0]]  > 100:
                 # draw the outer circle
-                cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
                 # draw the center of the circle
-                cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                 yellowangle = Vector3(i[0], i[1],i[2])
                 yellowdistance = i[2]/30 #some constant to get distance to ball
 
@@ -140,9 +147,9 @@ class ERRbotVision:
 
             if greenmask[i[1], i[0]]  > 100:
                 # draw the outer circle
-                cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
                 # draw the center of the circle
-                cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                 greenangle = Vector3(i[0], i[1],i[2])
                 greendistance = i[2]/30 #some constant to get distance to ball
 
@@ -165,11 +172,11 @@ class ERRbotVision:
         print (distance)
         print (angle)
 
-        while not rospy.is_shutdown():
-            data = angle, distance,is_object,what_object
-            #rospy.loginfo(int)
-            self.pub.publish(data)
-            self.r.sleep()
+        # while not rospy.is_shutdown():
+        #     data = angle, distance,is_object,what_object
+        #     #rospy.loginfo(int)
+        #     self.pub.publish(data)
+        #     self.r.sleep()
 
         #return (distance,is_object,what_object)
 
@@ -179,12 +186,20 @@ if __name__ == '__main__':
         n = ERRbotVision()
         #n.capture = False
         cv2.namedWindow('NeatoImage')
-        if n.capture == False:
-            print 'nope. no image.'
-        else:
-            print 'got an image'
-            n.Vision(n.new_img)
-            frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
-            cv2.imshow("NeatoImage",n.frame)
+        cv2.namedWindow('CirclesImage')
+        #cv2.namedWindow('EdgesImage')
+        cv2.imshow("NeatoImage",n.new_img)
+        while not(rospy.is_shutdown()):
+            if n.capture == False:
+                print 'nope. no image.'
+            else:
+                print 'got an image'
+                n.Vision(n.new_img)
+                frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
+                cv2.imshow("NeatoImage",frame)
+                cv2.imshow("CirclesImage",n.cimg)
+                #cv2.imshow("EdgesImage",n.edges)
+                cv2.waitKey(50)
+            print 'move on'
     except rospy.ROSInterruptException: 
         pass
