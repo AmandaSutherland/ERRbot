@@ -68,11 +68,6 @@ class ERRbotVision:
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         print 'messing with image'
 
-        lowerblue = np.array([10,110,110])
-        upperblue = np.array([130,255,255])
-        bluemask = cv2.inRange(hsv, lowerblue, upperblue)
-        print 'bluemask'
-
         lowerred = np.array([0,100,100])
         upperred = np.array([20,255,255])
         redmask = cv2.inRange(hsv, lowerred, upperred)
@@ -83,10 +78,17 @@ class ERRbotVision:
         yellowmask = cv2.inRange(hsv, loweryellow, upperyellow)
         print 'yellowmask'     
 
-        lowergreen = np.array([110,100,100])
+        lowergreen = np.array([50,100,100])
         uppergreen = np.array([130,255,255])
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
         print 'greenmask'
+
+        lowerblue = np.array([10,50,50])
+        upperblue = np.array([130,255,255])
+        # lowerblue = np.array([70,10,10])
+        # upperblue = np.array([130,255,255])
+        bluemask = cv2.inRange(hsv, lowerblue, upperblue)
+        print 'bluemask'
 
         self.edges = cv2.Canny(img, 100, 150)
         houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=22,minRadius=10,maxRadius=50)
