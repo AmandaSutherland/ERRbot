@@ -111,7 +111,7 @@ class ERRbotVision:
 
         #lowergreen = np.array([self.hue_lower,self.s_lower,self.v_lower])
         #uppergreen = np.array([self.hue_upper,self.s_upper,self.v_upper])
-        lowergreen = np.array([45,230,0])
+        lowergreen = np.array([33,230,0])
         uppergreen = np.array([85,255,130])
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
         #print 'greenmask'
@@ -186,14 +186,14 @@ class ERRbotVision:
                     angle.append(yellowangle)
                     is_object.append(1)
 
-                if bluemask[i[1], i[0]]  > 100:
+                if greenmask[i[1], i[0]]  > 100:
                     # draw the outer circle
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                     greenangle = Vector3(i[0], i[1],i[2])
                     greendistance = i[2]*.27 #some constant to get distance to ball
-                    print 'yellow'
+                    print 'green'
                     print (i[2])
 
                     what_object.append(4)
