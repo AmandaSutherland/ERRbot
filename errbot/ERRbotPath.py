@@ -29,7 +29,7 @@ class ERRbotPath:
 		#pub = rospy.Publisher('Path', String, queue_size = 10)
 		#rospy.init_node('ERRbotPath', anonymous = True)
 
-	def scan_received(msg):
+	def scan_received(self,msg):
 		""" Processes data from the laser scanner, msg is of type sensor_msgs/LaserScan"""
 		"""sets diff to -100 if broken """
 		global first_sight_wall
@@ -139,7 +139,7 @@ class ERRbotPath:
 
 	stopped = False
 
-	def find_wall(pub):
+	def find_wall(self,pub):
 		r = rospy.Rate(10) #10 hz
 		while not rospy.is_shutdown():
 			velocity_msg = Twist(Vector3(0.05,0.0,0.0),Vector3(0.0,0.0,0.0))
@@ -148,7 +148,7 @@ class ERRbotPath:
 				return 'wall_follow'
 			r.sleep()
 
-	def wall_follow(pub):
+	def wall_follow(self,pub):
 		global stopped
 		r = rospy.Rate(10) # 10hz
 		while not rospy.is_shutdown():
@@ -169,7 +169,7 @@ class ERRbotPath:
 				return 'obstacle_avoid'
 			r.sleep()
 	 
-	def obstacle_avoid(pub):
+	def obstacle_avoid(self,pub):
 		flag_things_in_front_5 = False
 		r = rospy.Rate(10)
 		while not rospy.is_shutdown():
@@ -184,26 +184,26 @@ class ERRbotPath:
 				return 'wall_follow'
 		r.sleep()
 		
-	if __name__ == '__main__':
-		try:
-			#int = linear, anglular
-			#rospy.loginfo(int)
-			#pub.publish(int)
-			#r.sleep()
+if __name__ == '__main__':
+	try:
+		#int = linear, anglular
+		#rospy.loginfo(int)
+		#pub.publish(int)
+		#r.sleep()
 
-			# Initializing node, path_planning
-			rospy.init_node('Path', anonymous=True)
-			pub = rospy.Publisher('Path', Twist, queue_size=10)
-			sub = rospy.Subscriber('scan', LaserScan, scan_received)
-			state = "find_wall"
-			while not rospy.is_shutdown():
-				if state == 'find_wall':
-					print 'I am now finding a wall'
-					state = find_wall(pub)
-				if state == 'wall_follow':
-					print 'I am now wall following'
-					state = wall_follow(pub)
-				if state == 'obstacle_avoid':
-					print 'I am now obstacle avoiding'
-					state = obstacle_avoid(pub)
-		except rospy.ROSInterruptException: pass
+		# Initializing node, path_planning
+		rospy.init_node('Path', anonymous=True)
+		pub = rospy.Publisher('Path', Twist, queue_size=10)
+		sub = rospy.Subscriber('scan', LaserScan, scan_received)
+		state = "find_wall"
+		while not rospy.is_shutdown():
+			if state == 'find_wall':
+				print 'I am now finding a wall'
+				state = find_wall(pub)
+			if state == 'wall_follow':
+				print 'I am now wall following'
+				state = wall_follow(pub)
+			if state == 'obstacle_avoid':
+				print 'I am now obstacle avoiding'
+				state = obstacle_avoid(pub)
+	except rospy.ROSInterruptException: pass
