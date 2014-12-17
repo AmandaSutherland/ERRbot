@@ -33,6 +33,19 @@ class ERRbotVision:
         self.pub = rospy.Publisher('Vision', Int64, queue_size = 10)
         rospy.init_node('ERRbotVision', anonymous = True)
         self.r = rospy.Rate(10)
+        cv2.namedWindow('greenmask')
+        cv2.createTrackbar('H Lower','greenmask', 45,255,self.set_hue_lower)
+        self.hue_lower = 45
+        cv2.createTrackbar('H Upper','greenmask', 85,255,self.set_hue_upper)
+        self.hue_upper = 85
+        cv2.createTrackbar('S Lower','greenmask', 230,255,self.set_s_lower)
+        self.s_lower = 230
+        cv2.createTrackbar('S Upper','greenmask', 255,255,self.set_s_upper)
+        self.s_upper = 255
+        cv2.createTrackbar('V Lower','greenmask', 0,255,self.set_v_lower)
+        self.v_lower = 0
+        cv2.createTrackbar('V Upper','greenmask', 130,255,self.set_v_upper)
+        self.v_upper = 130
 
         try:
             #for image capture 
@@ -42,6 +55,24 @@ class ERRbotVision:
         except AttributeError:
             print "ERROR!"
             pass    
+
+    def set_hue_lower(self,value):
+        self.hue_lower = value
+
+    def set_hue_upper(self,value):
+        self.hue_upper = value
+
+    def set_s_lower(self,value):
+        self.s_lower = value
+
+    def set_s_upper(self,value):
+        self.s_upper = value
+
+    def set_v_lower(self,value):
+        self.v_lower = value
+
+    def set_v_upper(self,value):
+        self.v_upper = value
 
     def capture(self,msg):
         # IMAGE FROM NEATO 
@@ -66,111 +97,122 @@ class ERRbotVision:
         grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         self.cimg = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        print 'messing with image'
+        #print 'messing with image'
 
-        lowerred = np.array([0,100,100])
+        lowerred = np.array([0,0,58])
         upperred = np.array([20,255,255])
         redmask = cv2.inRange(hsv, lowerred, upperred)
-        print 'redmask'
+        #print 'redmask'
 
-        loweryellow = np.array([20, 100, 100])
+        loweryellow = np.array([25,230,30])
         upperyellow = np.array([30,255,255])
         yellowmask = cv2.inRange(hsv, loweryellow, upperyellow)
-        print 'yellowmask'     
+        #print 'yellowmask'     
 
-        lowergreen = np.array([50,100,100])
-        uppergreen = np.array([130,255,255])
+        #lowergreen = np.array([self.hue_lower,self.s_lower,self.v_lower])
+        #uppergreen = np.array([self.hue_upper,self.s_upper,self.v_upper])
+        lowergreen = np.array([45,230,0])
+        uppergreen = np.array([85,255,130])
         greenmask = cv2.inRange(hsv, lowergreen, uppergreen)    
-        print 'greenmask'
-
-        lowerblue = np.array([10,50,50])
-        upperblue = np.array([130,255,255])
-        # lowerblue = np.array([70,10,10])
-        # upperblue = np.array([130,255,255])
+        #print 'greenmask'
+        
+        lowerblue = np.array([65,0,0])
+        upperblue = np.array([110,255,255])
         bluemask = cv2.inRange(hsv, lowerblue, upperblue)
-        print 'bluemask'
-
-        self.edges = cv2.Canny(img, 100, 150)
-        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=22,minRadius=10,maxRadius=50)
-        houghCircles = np.uint16(np.around(houghCircles))
-        print 'found circles'
-
+        cv2.imshow('greenmask',greenmask)
+        #print 'greenmask'
+        print (bluemask[1])
         what_object = []
         distance = []
         angle = []
         is_object = []
 
-        for i in houghCircles[0,:]:
-            print 'iterating circles'
-            print (i)
-            # draw the outer circle
-            cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,0),2)
-            # draw the center of the circle
-            cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,0),3)
+        self.edges = cv2.Canny(img, 100, 150)
+        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=22,minRadius=10,maxRadius=50)
+        if houghCircles != None:
+            houghCircles = np.uint16(np.around(houghCircles))
+        #print (houghCircles)            
 
-            if bluemask[i[1], i[0]]  > 100:
+            for i in houghCircles[0,:]:
+                print 'iterating circles'
+                print (i)
                 # draw the outer circle
-                cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
+                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,0),2)
                 # draw the center of the circle
-                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
-                bluedistance = i[2]/30 #some constant to get distance to ball
+                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,0),3)
 
-                what_object.append(1)
-                distance.append(bluedistance)
-                angle.append(blueangle)
-                is_object.append(1)
+                if bluemask[i[1], i[0]]  > 100:
+                    # draw the outer circle
+                    cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
+                    # draw the center of the circle
+                    cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
+                    blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
+                    bluedistance = 70 - (5*i[2]) #some constant to get distance to ball
+                    print 'blue'
+                    print (i[2])
 
-            if redmask[i[1], i[0]]  > 100:
-                # draw the outer circle
-                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
-                # draw the center of the circle
-                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                redangle = Vector3(i[0], i[1],i[2])
-                reddistance = i[2]/30 #some constant to get distance to ball
+                    what_object.append(1)
+                    distance.append(bluedistance)
+                    angle.append(blueangle)
+                    is_object.append(1)
 
-                what_object.append(2)
-                distance.append(reddistance)
-                angle.append(redangle)
-                is_object.append(1)
+                if redmask[i[1], i[0]]  > 100:
+                    # draw the outer circle
+                    cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
+                    # draw the center of the circle
+                    cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
+                    redangle = Vector3(i[0], i[1],i[2])
+                    reddistance = i[2]*.27 #some constant to get distance to ball
+                    print 'red'
+                    print (i[2])
 
-            if yellowmask[i[1], i[0]]  > 100:
-                # draw the outer circle
-                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
-                # draw the center of the circle
-                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                yellowangle = Vector3(i[0], i[1],i[2])
-                yellowdistance = i[2]/30 #some constant to get distance to ball
+                    what_object.append(2)
+                    distance.append(reddistance)
+                    angle.append(redangle)
+                    is_object.append(1)
 
-                what_object.append(3)
-                distance.append(yellowdistance)
-                angle.append(yellowangle)
-                is_object.append(1)
+                if yellowmask[i[1], i[0]]  > 100:
+                    # draw the outer circle
+                    cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
+                    # draw the center of the circle
+                    cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
+                    yellowangle = Vector3(i[0], i[1],i[2])
+                    yellowdistance = i[2]*.27 #some constant to get distance to ball
+                    print 'yellow'
+                    print (i[2])
 
-            if greenmask[i[1], i[0]]  > 100:
-                # draw the outer circle
-                cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
-                # draw the center of the circle
-                cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                greenangle = Vector3(i[0], i[1],i[2])
-                greendistance = i[2]/30 #some constant to get distance to ball
+                    what_object.append(3)
+                    distance.append(yellowdistance)
+                    angle.append(yellowangle)
+                    is_object.append(1)
 
-                what_object.append(4)
-                distance.append(greendistance)
-                angle.append(greenangle)
-                is_object.append(1)
+                if bluemask[i[1], i[0]]  > 100:
+                    # draw the outer circle
+                    cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
+                    # draw the center of the circle
+                    cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
+                    greenangle = Vector3(i[0], i[1],i[2])
+                    greendistance = i[2]*.27 #some constant to get distance to ball
+                    print 'yellow'
+                    print (i[2])
 
-            #if circle is in blue mask
-                #return blue
-                #add color, size, angle and probablility it is an object to arrays
-            #if circle is in red mask
-                #return red
-                #add color, size, angle and probablility it is an object to arrays
-            #if circle is in yellow mask
-                #return yellow
-                #add color, size, angle and probablility it is an object to arrays
+                    what_object.append(4)
+                    distance.append(greendistance)
+                    angle.append(greenangle)
+                    is_object.append(1)
+
+                #if circle is in blue mask
+                    #return blue
+                    #add color, size, angle and probablility it is an object to arrays
+                #if circle is in red mask
+                    #return red
+                    #add color, size, angle and probablility it is an object to arrays
+                #if circle is in yellow mask
+                    #return yellow
+                    #add color, size, angle and probablility it is an object to arrays
 
         print (what_object)
+        print 'distance'
         print (distance)
         print (angle)
 
