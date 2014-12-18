@@ -32,8 +32,13 @@ class ERRbotVision:
         self.distance = []
         self.angle = []
 
-        self.pub = rospy.Publisher('Vision', Int64, queue_size = 10)
         rospy.init_node('ERRbotVision', anonymous = True)
+        self.pub_red = rospy.Publisher('VisionRed', Twist, queue_size = 10)
+        self.pub_green = rospy.Publisher('VisionGreen', Twist, queue_size = 10)
+        self.pub_yellow = rospy.Publisher('VisionYellow', Twist, queue_size = 10)
+        self.pub_blue = rospy.Publisher('VisionBlue', Twist, queue_size = 10)
+
+        
         self.r = rospy.Rate(10)
         # cv2.namedWindow('bluemask')
         # cv2.createTrackbar('H Lower','bluemask', 65,255,self.set_hue_lower)
@@ -136,14 +141,13 @@ class ERRbotVision:
         #is_object = []
 
         self.edges = cv2.Canny(img, 100, 150)
-        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,40,param1=10,param2=28,minRadius=10,maxRadius=100)
-        if houghCircles != []:
+        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=24,minRadius=10,maxRadius=50)
+        if houghCircles != None:
             houghCircles = np.uint16(np.around(houghCircles))
         #print (houghCircles)            
 
             for i in houghCircles[0,:]:
                 #print 'iterating circles'
-                #print 'i'
                 #print (i)
                 # draw the outer circle
                 cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,0),2)
@@ -155,13 +159,12 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    blueangle = (i[0]-320)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
-                    #print 'blue angle'
-                    #print i[0]
-                    bluedistance = 70 - (5*i[2]) #some constant to get distance to ball
+                    blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
+                    bluedistance = Vector3(0,0,70 - (5*i[2])) #some constant to get distance to ball
                     #print 'blue'
                     #print (i[2])
 
+                    self.pub_blue.publish(Twist(blueangle,bluedistance))
                     self.what_object.append(1)
                     self.distance.append(bluedistance)
                     self.angle.append(blueangle)
@@ -172,11 +175,12 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    redangle = (i[0]-320)/30#
-                    #print 'red angle'
-                    #print i[0]
-                    reddistance = i[2]*.27 #some constant to get distance to ball
+                    redangle = Vector3(i[0], i[1],i[2])
+                    reddistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
+                    #print 'red'
+                    #print (i[2])
 
+                    self.pub_red.publish(Twist(redangle,reddistance))
                     self.what_object.append(2)
                     self.distance.append(reddistance)
                     self.angle.append(redangle)
@@ -187,11 +191,12 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    yellowangle = (i[0]-320)/30
-                    yellowdistance = i[2]*.27 #some constant to get distance to ball
+                    yellowangle = Vector3(i[0], i[1],i[2])
+                    yellowdistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
                     #print 'yellow'
                     #print (i[2])
 
+                    self.pub_yellow.publish(Twist(yellowangle,yellowdistance))
                     self.what_object.append(3)
                     self.distance.append(yellowdistance)
                     self.angle.append(yellowangle)
@@ -202,11 +207,12 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    greenangle = (i[0]-320)/30
-                    greendistance = i[2]*.27 #some constant to get distance to ball
+                    greenangle = Vector3(i[0], i[1],i[2])
+                    greendistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
                     #print 'green'
                     #print (i[2])
 
+                    self.pub_green.publish(Twist(greenangle,greendistance))
                     self.what_object.append(4)
                     self.distance.append(greendistance)
                     self.angle.append(greenangle)
@@ -253,13 +259,13 @@ if __name__ == '__main__':
                 #print 'got an image'
                 n.Vision(n.new_img)
                 frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
-                #print 'frame'
-                #print (n.new_img.shape[1]/2,n.new_img.shape[0]/2)
                 cv2.imshow("NeatoImage",frame)
                 cv2.imshow("CirclesImage",n.cimg)
                 #cv2.imshow("EdgesImage",n.edges)
                 data = n.what_object, n.distance, n.angle
-                n.pub.publish(data)
+                #if n.what_object == "RED":
+                #n.pub.publish(data)
+                
                 cv2.waitKey(50)
             #print 'move on'
     except rospy.ROSInterruptException: 
