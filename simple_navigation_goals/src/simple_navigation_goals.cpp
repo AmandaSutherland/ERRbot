@@ -21,6 +21,7 @@ int main(int argc, char** argv){
   goal.target_pose.header.frame_id = "base_link";
   goal.target_pose.header.stamp = ros::Time::now();
 
+  //changing this to take the pose and orientation from ERRbotVision
   goal.target_pose.pose.position.x = 1.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
