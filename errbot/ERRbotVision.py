@@ -91,6 +91,11 @@ class ERRbotVision:
         else:
             self.image_stream = False
 
+    def trig (self, distance, angle):
+        x = math.cos(angle)*distance
+        y = math.sin(angle)*distance
+        return (x,y)
+
     def Vision(self,img):
         '''
         outputs are distance,is_object,what_object
@@ -161,13 +166,14 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                     blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
                     bluedistance = Vector3(0,0,70 - (5*i[2])) #some constant to get distance to ball
+                    x,y=trig(bluedistance,blueangle)
                     #print 'blue'
                     #print (i[2])
 
-                    self.pub_blue.publish(Twist(blueangle,bluedistance))
-                    self.what_object.append(1)
-                    self.distance.append(bluedistance)
-                    self.angle.append(blueangle)
+                    self.pub_blue.publish(Twist(x,y))
+                    #self.what_object.append(1)
+                    #self.distance.append(bluedistance)
+                    #self.angle.append(blueangle)
                     #is_object.append(1)
 
                 if redmask[i[1], i[0]]  > 100:
@@ -177,13 +183,14 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                     redangle = Vector3(i[0], i[1],i[2])
                     reddistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
+                    x,y=trig(reddistance,redangle)
                     #print 'red'
                     #print (i[2])
 
-                    self.pub_red.publish(Twist(redangle,reddistance))
-                    self.what_object.append(2)
-                    self.distance.append(reddistance)
-                    self.angle.append(redangle)
+                    self.pub_red.publish(Twist(x,y))
+                    #self.what_object.append(2)
+                    #self.distance.append(reddistance)
+                    #self.angle.append(redangle)
                     #is_object.append(1)
 
                 if yellowmask[i[1], i[0]]  > 100:
@@ -193,13 +200,14 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                     yellowangle = Vector3(i[0], i[1],i[2])
                     yellowdistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
+                    x,y=trig(yellowdistance,yellowangle)
                     #print 'yellow'
                     #print (i[2])
 
-                    self.pub_yellow.publish(Twist(yellowangle,yellowdistance))
-                    self.what_object.append(3)
-                    self.distance.append(yellowdistance)
-                    self.angle.append(yellowangle)
+                    self.pub_yellow.publish(Twist(x,y))
+                    #self.what_object.append(3)
+                    #self.distance.append(yellowdistance)
+                    #self.angle.append(yellowangle)
                     #is_object.append(1)
 
                 if greenmask[i[1], i[0]]  > 100:
@@ -209,13 +217,14 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
                     greenangle = Vector3(i[0], i[1],i[2])
                     greendistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
+                    x,y=trig(greendistance,greenangle)
                     #print 'green'
                     #print (i[2])
 
-                    self.pub_green.publish(Twist(greenangle,greendistance))
-                    self.what_object.append(4)
-                    self.distance.append(greendistance)
-                    self.angle.append(greenangle)
+                    self.pub_green.publish(Twist(x,y))
+                    #self.what_object.append(4)
+                    #self.distance.append(greendistance)
+                    #self.angle.append(greenangle)
                     #self.is_object.append(1)
 
                 #if circle is in blue mask
@@ -262,7 +271,7 @@ if __name__ == '__main__':
                 cv2.imshow("NeatoImage",frame)
                 cv2.imshow("CirclesImage",n.cimg)
                 #cv2.imshow("EdgesImage",n.edges)
-                data = n.what_object, n.distance, n.angle
+                #data = n.what_object, n.distance, n.angle
                 #if n.what_object == "RED":
                 #n.pub.publish(data)
                 
