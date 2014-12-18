@@ -146,7 +146,7 @@ class ERRbotVision:
         #is_object = []
 
         self.edges = cv2.Canny(img, 100, 150)
-        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=24,minRadius=10,maxRadius=50)
+        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=20,param2=24,minRadius=10,maxRadius=50)
         if houghCircles != None:
             houghCircles = np.uint16(np.around(houghCircles))
         #print (houghCircles)            
