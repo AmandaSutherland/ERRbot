@@ -5,6 +5,7 @@ import cv
 import cv2
 import numpy as np
 import math 
+import random
 
 from geometry_msgs.msg import Twist, Vector3
 from matplotlib import pyplot as plt
@@ -58,8 +59,8 @@ class ERRbotMain:
 		position = Point()
 		orientation = Quaternion()
 
-		position.x = randint(0,9)
-		position.y = randint(0,9)
+		position.x = random.randint(0,9)
+		position.y = random.randint(0,9)
 		position.z = 0
 		orientation.x = 0
 		orientation.y = 0
