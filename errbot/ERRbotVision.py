@@ -5,7 +5,6 @@
 #to view image
 #rosrun image_view image_view image:=/camera/image_raw
 
-
 import rospy
 import cv
 import cv2
@@ -59,23 +58,23 @@ class ERRbotVision:
             print "ERROR!"
             pass    
 
-    def set_hue_lower(self,value):
-        self.hue_lower = value
+    # def set_hue_lower(self,value):
+    #     self.hue_lower = value
 
-    def set_hue_upper(self,value):
-        self.hue_upper = value
+    # def set_hue_upper(self,value):
+    #     self.hue_upper = value
 
-    def set_s_lower(self,value):
-        self.s_lower = value
+    # def set_s_lower(self,value):
+    #     self.s_lower = value
 
-    def set_s_upper(self,value):
-        self.s_upper = value
+    # def set_s_upper(self,value):
+    #     self.s_upper = value
 
-    def set_v_lower(self,value):
-        self.v_lower = value
+    # def set_v_lower(self,value):
+    #     self.v_lower = value
 
-    def set_v_upper(self,value):
-        self.v_upper = value
+    # def set_v_upper(self,value):
+    #     self.v_upper = value
 
     def capture(self,msg):
         # IMAGE FROM NEATO 
@@ -227,8 +226,8 @@ class ERRbotVision:
         #print (self.what_object)
         #print 'distance'
         #print (self.distance)
-        print 'angle'
-        print (self.angle)
+        #print 'angle'
+        #print (self.angle)
 
         # while not rospy.is_shutdown():
         #     data = angle, distance,is_object,what_object
