@@ -20,12 +20,22 @@ class ERRbotMain:
 		rospy.Subscriber("scan", LaserScan, queue_size=1)
 		self.vel_pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
 		self.chatter_pub=rospy.Publisher('chatter',String,queue_size=10)
-		self.vision_pub=rospy.Publisher("vision_pub",Int64,queue_size=10)
+		#self.vision_pub=rospy.Publisher("vision_pub",Int64,queue_size=10)
 
-		self.vision = rospy.Subscriber("Vision", Int64, self.vision_callback, queue_size=1)
+		#self.vision = rospy.Subscriber("Vision", Int64, self.vision_callback, queue_size=1)
 		self.map = rospy.Subscriber("Map", Int64, queue_size=1)
 		#self.path = rospy.Subscriber("Path", Int64, queue_size=1)
 		self.wall_follow = rospy.Subscriber("Wall_Follow", Twist, self.wall_follow_callback,queue_size=1)
+		
+		#subscribe to balls
+		#Vector3, Vector3
+		#Vector3[1,2,3] represent the angle, Vector3[3] represents the distance
+
+		self.vision_red = rospy.Subscriber("Red", Twist, queue_size=1)
+		self.vision_yellow = rospy.Subscriber("Yellow", Twist, queue_size=1)
+		self.vision_green = rospy.Subscriber("Green", Twist, queue_size=1)
+		self.vision_blue = rospy.Subscriber("Blue", Twist, queue_size=1)
+
 		self.vision_flag = False
 		self.wall_follow_flag = False
 
@@ -43,6 +53,8 @@ class ERRbotMain:
 		if self.wall_follow_flag == True: #when data arrives
 			pass
 			#self.vel_pub.publish(self.wall_follow_data)
+
+		#something that talks to dead reckoning
 
 	def thing(self):
 		self.chatter_pub.publish('hello')
