@@ -98,11 +98,11 @@ include_directories(
 
 ## Declare a cpp library
 # add_library(using_markers
-#   src/${PROJECT_NAME}/using_markers.cpp
+#   src/${PROJECT_NAME}/using_markers.py
 # )
 
 ## Declare a cpp executable
-# add_executable(using_markers_node src/using_markers_node.cpp)
+# add_executable(using_markers_node src/using_markers_node.py)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
