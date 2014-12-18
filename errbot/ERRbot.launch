@@ -4,10 +4,12 @@
 
 <include file="$(find errbot)/hector_mapping_neato_errbot.launch"/>
 
-<!--<node pkg="errbot" type="ERRbot.py" name="main"/>-->
-<!--<node pkg="errbot" type="ERRbotPath.py" name="Path"/>-->
-<node pkg="errbot" type="ERRbotVision.py" name="Vision"/>
-<node pkg="errbot" type="ERRbotMap.py" name="Map"/>
+<node pkg="errbot" type="ERRbot.py" name="main"/>
+<!--<node pkg="errbot" type="ERRbotPath.py" name="Path"/>-->ls
+<node pkg="errbot" type="wall_follow.py" name="Wall_Follow"/>
+<node pkg="errbot" type="ERRbotVision.py" name="ERRbotVision"/>
+<!--<node pkg="errbot" type="ERRbotMap.py" name="Map"/>-->
 <!--<node pkg="errbot" type="ERRbotTest.py" name="test="/>-->
 
 </launch>
+

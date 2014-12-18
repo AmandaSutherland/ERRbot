@@ -12,44 +12,53 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, PoseArray, Pose, Point, Quaternion, Vector3
-from std_msgs.msg import String,Int64
+from std_msgs.msg import String, Int64
 
 class ERRbotMain:
 
 	def __init__(self):
 		rospy.Subscriber("scan", LaserScan, queue_size=1)
-		self.pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
-		# self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
-		# self.bridge = CvBridge()
-		# self.new_img = Nonec
+		self.vel_pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
+		self.chatter_pub=rospy.Publisher('chatter',String,queue_size=10)
+		#self.vision_pub=rospy.Publisher("vision_pub",Int64,queue_size=10)
 
-		self.vision = rospy.Subscriber("Vision", 	Int64, queue_size=1)
+		#self.vision = rospy.Subscriber("Vision", Int64, self.vision_callback, queue_size=1)
 		self.map = rospy.Subscriber("Map", Int64, queue_size=1)
-		self.path = rospy.Subscriber("Path", Int64, queue_size=1)
+		#self.path = rospy.Subscriber("Path", Int64, queue_size=1)
+		self.wall_follow = rospy.Subscriber("Wall_Follow", Twist, self.wall_follow_callback,queue_size=1)
+		
+		#subscribe to balls
+		#Vector3, Vector3
+		#Vector3[1,2,3] represent the angle, Vector3[3] represents the distance
 
-		# try:
-		# 	#for image capture 
-		# 	self.camera_listener = rospy.Subscriber("camera/image_raw", Image, self.capture)
-		# 	self.bridge = CvBridge()
-		# 	#make image something useful
-		# except AttributeError:
-		# 	print "ERROR!"
-		# 	pass	
+		self.vision_red = rospy.Subscriber("Red", Twist, queue_size=1)
+		self.vision_yellow = rospy.Subscriber("Yellow", Twist, queue_size=1)
+		self.vision_green = rospy.Subscriber("Green", Twist, queue_size=1)
+		self.vision_blue = rospy.Subscriber("Blue", Twist, queue_size=1)
 
-	# def capture(self,msg):
-	# 	# IMAGE FROM NEATO 
-	# 	#useful link for image types http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
-	# 	cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-	# 	self.new_img = cv_image
-	# 	if self.new_img.shape[0] == 480:
-	# 		self.image_stream = True
-	# 	else:
-	# 		self.image_stream = False
+		self.vision_flag = False
+		self.wall_follow_flag = False
+
+	def vision_callback(self,data):
+		self.vision_data = data
+		self.vision_flag = True
+		self.vision_pub(self.vision_data)
+
+
+	def wall_follow_callback(self,data):
+		self.wall_folow_data = data
+		self.wall_follow_flag = True
 
 	def arbiter(self):
-		linear,angular=self.path
-		#remove this when is_object is created
-		pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
+		if self.wall_follow_flag == True: #when data arrives
+			pass
+			#self.vel_pub.publish(self.wall_follow_data)
+
+		#something that talks to dead reckoning
+
+	def thing(self):
+		self.chatter_pub.publish('hello')
+
 
 		# if is_object > .8:
 		# 	#its an object!! Map it and move on!
@@ -68,24 +77,9 @@ class ERRbotMain:
 			#pub.publish(Twist(linear=Vector3(x=linear),angular=Vector3(z=angular)))
 
 if __name__ == '__main__':
-	# rospy.init_node('capture', anonymous=True)
+	rospy.init_node('capture', anonymous=True)
 	n = ERRbotMain()
-	#n.capture = False
 	while not(rospy.is_shutdown()):
-		# if n.capture == False:
-		# 	print 'nope. no image.'
-		# else:
-		# 	try:
-		# 		#may need to make the arbiter an additional thread. working to resolve this.
-		# 		location,is_object,what_object = thread.start_new_thread(ERRbotVision.Vison,(img))
-		# 		mapping = thread.start_new_thread(ERRbotMap.Map,(n.new_object))
-		# 		next_move = thread.start_new_thread(ERRbotPath.Path,(mapping))
-		# 	except:
-		# 		print 'failed threading'
-		# location=0
-		# is_object=0
-		# what_object=0
-		# next_move=0
+
 		n.arbiter()
-		# cv2.namedWindow("Image")
-		# cv2.imshow("Image",frame)
+		n.thing()
