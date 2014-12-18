@@ -137,14 +137,13 @@ class ERRbotVision:
         #is_object = []
 
         self.edges = cv2.Canny(img, 100, 150)
-        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,40,param1=10,param2=28,minRadius=10,maxRadius=100)
-        if houghCircles != []:
+        houghCircles = cv2.HoughCircles(self.edges,cv2.cv.CV_HOUGH_GRADIENT,1,20,param1=10,param2=24,minRadius=10,maxRadius=50)
+        if houghCircles != None:
             houghCircles = np.uint16(np.around(houghCircles))
         #print (houghCircles)            
 
             for i in houghCircles[0,:]:
                 #print 'iterating circles'
-                #print 'i'
                 #print (i)
                 # draw the outer circle
                 cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,0),2)
@@ -156,9 +155,7 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    blueangle = (i[0]-320)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
-                    #print 'blue angle'
-                    #print i[0]
+                    blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
                     bluedistance = 70 - (5*i[2]) #some constant to get distance to ball
                     #print 'blue'
                     #print (i[2])
@@ -173,10 +170,10 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    redangle = (i[0]-320)/30#
-                    #print 'red angle'
-                    #print i[0]
+                    redangle = Vector3(i[0], i[1],i[2])
                     reddistance = i[2]*.27 #some constant to get distance to ball
+                    #print 'red'
+                    #print (i[2])
 
                     self.what_object.append(2)
                     self.distance.append(reddistance)
@@ -188,7 +185,7 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    yellowangle = (i[0]-320)/30
+                    yellowangle = Vector3(i[0], i[1],i[2])
                     yellowdistance = i[2]*.27 #some constant to get distance to ball
                     #print 'yellow'
                     #print (i[2])
@@ -203,7 +200,7 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    greenangle = (i[0]-320)/30
+                    greenangle = Vector3(i[0], i[1],i[2])
                     greendistance = i[2]*.27 #some constant to get distance to ball
                     #print 'green'
                     #print (i[2])
@@ -223,10 +220,10 @@ class ERRbotVision:
                     #return yellow
                     #add color, size, angle and probablility it is an object to arrays
 
-        #print 'object'
-        #print (self.what_object)
-        #print 'distance'
-        #print (self.distance)
+        print 'object'
+        print (self.what_object)
+        print 'distance'
+        print (self.distance)
         print 'angle'
         print (self.angle)
 
@@ -254,8 +251,6 @@ if __name__ == '__main__':
                 #print 'got an image'
                 n.Vision(n.new_img)
                 frame = np.array(cv2.resize(n.new_img,(n.new_img.shape[1]/2,n.new_img.shape[0]/2)))
-                #print 'frame'
-                #print (n.new_img.shape[1]/2,n.new_img.shape[0]/2)
                 cv2.imshow("NeatoImage",frame)
                 cv2.imshow("CirclesImage",n.cimg)
                 #cv2.imshow("EdgesImage",n.edges)
