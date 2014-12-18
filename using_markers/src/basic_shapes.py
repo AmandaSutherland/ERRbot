@@ -27,11 +27,11 @@ class Main:
 	def __init__(self):
 		rospy.Subscriber("scan", LaserScan, queue_size=1)
 		self.pub=rospy.Publisher('cmd_vel',Twist,queue_size=1)
-		self.xs_red, self.ys_red = rospy.Subscriber('VisionRed', Twist, self.Red, queue_size=1)
-		self.xs_green, self.ys_green = rospy.Subscriber('VisionGreen', Twist, self.Green, queue_size=1)
-		self.xs_blue, self.ys_blue = rospy.Subscriber('VisionBlue', Twist, self.Blue, queue_size=1)
-		self.xs_yellow, self.ys_yellow = rospy.Subscriber('VisionYellow', Twist, self.Yellow, queue_size=1)
-
+		self.red_sub = rospy.Subscriber('VisionRed', Twist, self.Red, queue_size=1)
+		self.green_sub = rospy.Subscriber('VisionGreen', Twist, self.Green, queue_size=1)
+		self.blue_sub = rospy.Subscriber('VisionBlue', Twist, self.Blue, queue_size=1)
+		self.yellow_sub = rospy.Subscriber('VisionYellow', Twist, self.Yellow, queue_size=1)
+		self.markerArray = MarkerArray()
 		#xs_red, ys_red = subVRed;
  		#xs_green, ys_green = subVGreen;
 		#xs_blue, ys_blue = subVBlue;
@@ -40,7 +40,7 @@ class Main:
 
 
 
-	def Red(self):
+	def Red(self,data):
 		#if ball_types = subVRed:
 		marker = Marker()
 		marker.header.frame_id = 0
@@ -55,15 +55,16 @@ class Main:
 		marker.color.g = 1.0
 		marker.color.b = 0.0
 		marker.pose.orientation.w = 1.0
-		marker.pose.position.x = self.xs_red
-		marker.pose.position.y = self.ys_red
+		marker.pose.position.x = data.linear.z
+		marker.pose.position.y = data.angular.z
 		marker.pose.position.z = 0
 		marker.lifetime = rospy.Duration()
 		marker.color.a = 1.0
 
-		markerArray.markers.append(marker)
+		self.markerArray.markers.append(marker)
 
-	def Green(self):
+
+	def Green(self,data):
 		#if ball_types = subVGreen:
 		marker = Marker()
 		marker.header.frame_id = 1
@@ -78,15 +79,15 @@ class Main:
 		marker.color.g = 1.0
 		marker.color.b = 0.0
 		marker.pose.orientation.w = 1.0
-		marker.pose.position.x = self.xs_green
-		marker.pose.position.y = self.ys_green
+		marker.pose.position.x = data.linear.z
+		marker.pose.position.y = data.angular.z
 		marker.pose.position.z = 0
 		marker.lifetime = rospy.Duration()
 		marker.color.r = 1.0
 
-		markerArray.markers.append(marker)
+		self.markerArray.markers.append(marker)
 
-	def Blue(self):
+	def Blue(self,data):
 		#if ball_types = subVBlue:
 		marker = Marker()
 		marker.header.frame_id = 2
@@ -101,15 +102,15 @@ class Main:
 		marker.color.g = 1.0
 		marker.color.b = 0.0
 		marker.pose.orientation.w = 1.0
-		marker.pose.position.x = self.xs_blue
-		marker.pose.position.y = self.ys_blue
+		marker.pose.position.x = data.linear.z
+		marker.pose.position.y = data.angular.z
 		marker.pose.position.z = 0
 		marker.lifetime = rospy.Duration()
 		marker.color.a = 1.0
 
-		markerArray.markers.append(marker)
+		self.markerArray.markers.append(marker)
 
-	def Yellow(self):
+	def Yellow(self,data):
 		#if ball_types = subVYellow:
 		marker = Marker()
 		marker.header.frame_id = 3
@@ -124,22 +125,24 @@ class Main:
 		marker.color.g = 1.0
 		marker.color.b = 0.0
 		marker.pose.orientation.w = 1.0
-		marker.pose.position.x = self.xs_yellow
-		marker.pose.position.y = self.ys_yellow
+		marker.pose.position.x = data.linear.z
+		marker.pose.position.y = data.angular.z
 		marker.pose.position.z = 0
 		marker.lifetime = rospy.Duration()
 		marker.color.a = 1.0
 
-		markerArray.markers.append(marker)
- 
-
+		self.markerArray.markers.append(marker)
 
 if __name__ == '__main__':
-	#n = basic_shapes()
+	rospy.init_node('visuals', anonymous=True)
+	n = Main()
+	pub = rospy.Publisher('/visualization_marker_array', MarkerArray)
 	while not(rospy.is_shutdown()):
-		basic_shapes()
-	except rospy.ROSInterruptException:
-		pass
+		try:
+			pub.publish(n.markerArray)
+			#print marker 
+		except rospy.ROSInterruptException:
+			pass
 
 	
 	

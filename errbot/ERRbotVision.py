@@ -38,6 +38,8 @@ class ERRbotVision:
         self.pub_yellow = rospy.Publisher('VisionYellow', Twist, queue_size = 10)
         self.pub_blue = rospy.Publisher('VisionBlue', Twist, queue_size = 10)
 
+        self.angles_pub=rospy.Publisher('angles',String,queue_size=10)
+
         
         self.r = rospy.Rate(10)
         # cv2.namedWindow('bluemask')
@@ -91,9 +93,12 @@ class ERRbotVision:
         else:
             self.image_stream = False
 
-    def trig (self, distance, angle):
-        x = math.cos(angle)*distance
-        y = math.sin(angle)*distance
+    def trig(self, distance, angle):
+        x = float(math.cos(angle.z))*float(distance.z)
+        y = float(math.sin(angle.z))*float(distance.z)
+       # x = 0
+       # y = 0
+        self.angles_pub.publish('%s' %angle)
         return (x,y)
 
     def Vision(self,img):
@@ -164,9 +169,11 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(255,0,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    blueangle = (i[0]-280)/30#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
+                    blueangle = Vector3(0, 0,(i[0]-280)/30)#pixel# - middle pixel / angles Vector3(i[0], i[1],i[2])
                     bluedistance = Vector3(0,0,70 - (5*i[2])) #some constant to get distance to ball
-                    x,y=trig(bluedistance,blueangle)
+                    x,y=self.trig(bluedistance,blueangle)
+                    x = Vector3(0,0,x)
+                    y = Vector3(0,0,y)    
                     #print 'blue'
                     #print (i[2])
 
@@ -181,9 +188,11 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,0,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    redangle = Vector3(i[0], i[1],i[2])
+                    redangle = Vector3(0, 0,(i[0]-280)/30)
                     reddistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
-                    x,y=trig(reddistance,redangle)
+                    x,y=self.trig(reddistance,redangle)
+                    x = Vector3(0,0,x)
+                    y = Vector3(0,0,y)                   
                     #print 'red'
                     #print (i[2])
 
@@ -198,9 +207,11 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,255),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    yellowangle = Vector3(i[0], i[1],i[2])
+                    yellowangle = Vector3(0, 0,(i[0]-280)/30)
                     yellowdistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
-                    x,y=trig(yellowdistance,yellowangle)
+                    x,y=self.trig(yellowdistance,yellowangle)
+                    x = Vector3(0,0,x)
+                    y = Vector3(0,0,y)
                     #print 'yellow'
                     #print (i[2])
 
@@ -215,9 +226,11 @@ class ERRbotVision:
                     cv2.circle(self.cimg,(i[0],i[1]),i[2],(0,255,0),2)
                     # draw the center of the circle
                     cv2.circle(self.cimg,(i[0],i[1]),2,(0,0,255),3)
-                    greenangle = Vector3(i[0], i[1],i[2])
+                    greenangle = Vector3(0, 0,(i[0]-280)/30)
                     greendistance = Vector3(0,0,i[2]*.27) #some constant to get distance to ball
-                    x,y=trig(greendistance,greenangle)
+                    x,y=self.trig(greendistance,greenangle)
+                    x = Vector3(0,0,x)
+                    y = Vector3(0,0,y)
                     #print 'green'
                     #print (i[2])
 
