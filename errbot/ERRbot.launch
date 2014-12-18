@@ -1,11 +1,15 @@
 <launch>
 
-<node pkg="rviz" type="rviz" name="rviz" args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>
+<!--<node pkg="rviz" type="rviz" name="rviz" args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>-->
 
 <include file="$(find errbot)/hector_mapping_neato_errbot.launch"/>
 
+<include file="$(find neato_2dnav)/launch/dead_reckoning.launch"/>
+
+<include file="$(find turtlebot_rviz_launchers)/launch/view_navigation.launch"/>
+
 <node pkg="errbot" type="ERRbot.py" name="main"/>
-<!--<node pkg="errbot" type="ERRbotPath.py" name="Path"/>-->ls
+<!--<node pkg="errbot" type="ERRbotPath.py" name="Path"/>-->
 <node pkg="errbot" type="wall_follow.py" name="Wall_Follow"/>
 <node pkg="errbot" type="ERRbotVision.py" name="ERRbotVision"/>
 <!--<node pkg="errbot" type="ERRbotMap.py" name="Map"/>-->
